@@ -1,18 +1,17 @@
 package com.example.a3406.app_ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.a3406.viewmodel.AddBookViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AddBookScreen(navController: NavController, viewModel: AddBookViewModel = viewModel()) {
+fun AddBookScreen(navController: NavController) {
+    val viewModel: AddBookViewModel = koinViewModel()
     var title by remember { mutableStateOf("") }
     var author by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
@@ -24,77 +23,30 @@ fun AddBookScreen(navController: NavController, viewModel: AddBookViewModel = vi
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
-            .imePadding(),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Add a New Book", style = MaterialTheme.typography.headlineMedium)
+        TextField(value = title, onValueChange = { title = it }, label = { Text("Title") })
+        TextField(value = author, onValueChange = { author = it }, label = { Text("Author") })
+        TextField(value = description, onValueChange = { description = it }, label = { Text("Description") })
+        TextField(value = progress, onValueChange = { progress = it }, label = { Text("Progress (0-100)") })
+        TextField(value = rating, onValueChange = { rating = it }, label = { Text("Rating (1-5)") })
+        TextField(value = review, onValueChange = { review = it }, label = { Text("Review") })
+        TextField(value = genre, onValueChange = { genre = it }, label = { Text("Genre") })
 
-        OutlinedTextField(
-            value = title,
-            onValueChange = { title = it },
-            label = { Text("Title") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = author,
-            onValueChange = { author = it },
-            label = { Text("Author") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = description,
-            onValueChange = { description = it },
-            label = { Text("Description") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = progress,
-            onValueChange = { if (it.length <= 3) progress = it },
-            label = { Text("Progress (%)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = rating,
-            onValueChange = { if (it.length <= 1) rating = it },
-            label = { Text("Rating (1-5)") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = review,
-            onValueChange = { review = it },
-            label = { Text("Review") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = genre,
-            onValueChange = { genre = it },
-            label = { Text("Genre") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                val progressInt = progress.toIntOrNull() ?: 0
-                val ratingInt = rating.toIntOrNull() ?: 0
-                if (progressInt in 0..100 && ratingInt in 0..5) {
-                    viewModel.addBook(title, author, description, progressInt, ratingInt, review, genre)
-                    navController.popBackStack()
-                } else {
-                    // Show error (e.g., using a Snackbar, which we'll add later)
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Save")
+        Button(onClick = {
+            viewModel.addBook(
+                title,
+                author,
+                description,
+                progress.toIntOrNull() ?: 0,
+                rating.toIntOrNull() ?: 0,
+                review,
+                genre
+            )
+            navController.popBackStack()
+        }) {
+            Text("Add Book")
         }
     }
 }
