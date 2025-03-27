@@ -6,8 +6,8 @@ data class Book(
     val author: String,
     val description: String,
     val coverUrl: String? = null,
-    val progress: Int = 0, // Percentage (0-100)
-    val rating: Int = 0, // 1-5 stars
+    val progress: Int = 0,
+    val rating: Int = 0,
     val review: String? = null,
-    val genre: String? = null // For personalized recommendations
+    val genre: String? = null
 )

@@ -1,0 +1,26 @@
+CREATE TABLE Book (
+    id TEXT NOT NULL PRIMARY KEY,
+    title TEXT NOT NULL,
+    author TEXT NOT NULL,
+    description TEXT NOT NULL,
+    coverUrl TEXT,
+    progress INTEGER NOT NULL,
+    rating INTEGER NOT NULL,
+    review TEXT,
+    genre TEXT
+);
+
+insertBook:
+INSERT INTO Book (id, title, author, description, coverUrl, progress, rating, review, genre)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+updateBook:
+UPDATE Book
+SET title = ?, author = ?, description = ?, coverUrl = ?, progress = ?, rating = ?, review = ?, genre = ?
+WHERE id = ?;
+
+selectAllBooks:
+SELECT * FROM Book;
+
+selectBookById:
+SELECT * FROM Book WHERE id = ?;
