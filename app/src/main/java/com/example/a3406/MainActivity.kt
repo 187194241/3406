@@ -5,20 +5,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
-import com.example.a3406.navigation.NavGraph
+import com.example.a3406.navigation.SetupNavGraph
+import com.example.a3406.ui.theme._3406Theme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApp()
+            _3406Theme {
+                BookTrackerApp()
+            }
         }
     }
 }
 
 @Composable
-fun MyApp() {
+fun BookTrackerApp() {
     val navController = rememberNavController()
-
-    NavGraph(navController = navController)
+    SetupNavGraph(navController = navController)
 }
