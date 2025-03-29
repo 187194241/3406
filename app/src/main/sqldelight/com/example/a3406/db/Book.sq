@@ -4,8 +4,8 @@ CREATE TABLE Book (
     author TEXT NOT NULL,
     description TEXT NOT NULL,
     coverUrl TEXT,
-    progress INTEGER NOT NULL,
-    rating INTEGER NOT NULL,
+    progress INTEGER NOT NULL DEFAULT 0,
+    rating INTEGER NOT NULL DEFAULT 0,
     review TEXT,
     genre TEXT
 );
@@ -14,13 +14,16 @@ insertBook:
 INSERT INTO Book (id, title, author, description, coverUrl, progress, rating, review, genre)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
 
-updateBook:
-UPDATE Book
-SET title = ?, author = ?, description = ?, coverUrl = ?, progress = ?, rating = ?, review = ?, genre = ?
-WHERE id = ?;
-
 selectAllBooks:
 SELECT * FROM Book;
 
 selectBookById:
 SELECT * FROM Book WHERE id = ?;
+
+updateBook:
+UPDATE Book
+SET title = ?, author = ?, description = ?, coverUrl = ?, progress = ?, rating = ?, review = ?, genre = ?
+WHERE id = ?;
+
+deleteBook:
+DELETE FROM Book WHERE id = ?;
