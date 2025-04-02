@@ -3,6 +3,7 @@ package com.example.a3406.app_ui
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -18,18 +19,27 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
 
     val book by viewModel.book.collectAsState()
 
-    book?.let { currentBook ->
+    if (book == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("Book not found or loading...", modifier = Modifier.padding(16.dp))
+        }
+    } else {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(text = currentBook.title, style = MaterialTheme.typography.headlineMedium)
-            Text(text = "Author: ${currentBook.author}")
-            Text(text = "Description: ${currentBook.description}")
+            Text(text = book!!.title, style = MaterialTheme.typography.headlineMedium)
+            Text(text = "Author: ${book!!.author}")
+            Text(text = "Description: ${book!!.description}")
 
-            var progress by remember { mutableStateOf(currentBook.progress.toString()) }
+            var progress by remember { mutableStateOf(book!!.progress.toString()) }
             TextField(
                 value = progress,
                 onValueChange = {
@@ -40,7 +50,7 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
                 label = { Text("Progress (0-100)") }
             )
 
-            var rating by remember { mutableStateOf(currentBook.rating.toString()) }
+            var rating by remember { mutableStateOf(book!!.rating.toString()) }
             TextField(
                 value = rating,
                 onValueChange = {
@@ -51,7 +61,7 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
                 label = { Text("Rating (1-5)") }
             )
 
-            var review by remember { mutableStateOf(currentBook.review ?: "") }
+            var review by remember { mutableStateOf(book!!.review ?: "") }
             TextField(
                 value = review,
                 onValueChange = {
@@ -61,7 +71,5 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
                 label = { Text("Review") }
             )
         }
-    } ?: run {
-        Text("Loading book details...", modifier = Modifier.padding(16.dp))
     }
 }

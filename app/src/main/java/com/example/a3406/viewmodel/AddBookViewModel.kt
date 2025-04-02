@@ -5,13 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.a3406.model.Book
 import com.example.a3406.repository.BookRepository
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 import java.util.UUID
 
-class AddBookViewModel : ViewModel(), KoinComponent {
-    private val repository: BookRepository by inject()
-
+class AddBookViewModel(private val repository: BookRepository) : ViewModel() {
     fun addBook(
         title: String,
         author: String,
@@ -21,17 +17,18 @@ class AddBookViewModel : ViewModel(), KoinComponent {
         review: String,
         genre: String
     ) {
-        val book = Book(
-            id = UUID.randomUUID().toString(),
-            title = title,
-            author = author,
-            description = description,
-            progress = progress,
-            rating = rating,
-            review = review,
-            genre = genre
-        )
         viewModelScope.launch {
+            val book = Book(
+                id = UUID.randomUUID().toString(),
+                title = title,
+                author = author,
+                description = description,
+                coverUrl = null,
+                progress = progress,
+                rating = rating,
+                review = review,
+                genre = genre
+            )
             repository.addBook(book)
         }
     }

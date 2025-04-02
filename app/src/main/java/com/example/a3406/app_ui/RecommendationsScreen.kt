@@ -5,7 +5,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -20,6 +22,11 @@ fun RecommendationsScreen(navController: NavController) {
     val recommendedBooksState = viewModel.recommendedBooks.collectAsState()
     val recommendedBooks = recommendedBooksState.value
 
+    // 在屏幕加载时自动获取推荐书籍
+    LaunchedEffect(Unit) {
+        viewModel.fetchRecommendationsByGenreFromLocalBooks()
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -31,21 +38,42 @@ fun RecommendationsScreen(navController: NavController) {
 
         when (recommendedBooks) {
             is Result.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
             is Result.Success<List<Book>> -> {
                 val books = recommendedBooks.data
-                LazyColumn {
-                    items(books) { book ->
-                        BookCard(book = book) {}
+                if (books.isEmpty()) {
+                    Text("No recommendations available.")
+                } else {
+                    LazyColumn {
+                        items(books) { book ->
+                            BookCard(book = book) {
+                                navController.navigate("book_detail/${book.id}")
+                            }
+                        }
                     }
                 }
             }
             is Result.Error -> {
-                Text(
-                    text = "Error: ${recommendedBooks.message}",
-                    color = MaterialTheme.colorScheme.error
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Error: ${recommendedBooks.message}",
+                        color = MaterialTheme.colorScheme.error
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(onClick = { viewModel.fetchRecommendationsByGenreFromLocalBooks() }) {
+                        Text("Retry")
+                    }
+                }
             }
         }
     }

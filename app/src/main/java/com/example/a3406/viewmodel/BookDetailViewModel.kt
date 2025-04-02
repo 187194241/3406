@@ -5,20 +5,22 @@ import androidx.lifecycle.viewModelScope
 import com.example.a3406.model.Book
 import com.example.a3406.repository.BookRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class BookDetailViewModel : ViewModel(), KoinComponent {
-    private val repository: BookRepository by inject()
-
+class BookDetailViewModel(private val repository: BookRepository) : ViewModel() {
     private val _book = MutableStateFlow<Book?>(null)
     val book: StateFlow<Book?> = _book
 
     fun loadBook(bookId: String) {
         viewModelScope.launch {
-            _book.value = repository.getBookById(bookId)
+            repository.getBookById(bookId)
+                .stateIn(viewModelScope, SharingStarted.Lazily, null)
+                .collect { book ->
+                    _book.value = book
+                }
         }
     }
 
