@@ -7,12 +7,8 @@ import com.example.a3406.repository.BookRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class BookListViewModel : ViewModel(), KoinComponent {
-    private val repository: BookRepository by inject()
-
+class BookListViewModel(private val repository: BookRepository) : ViewModel() {
     val books: StateFlow<List<Book>> = repository.getAllBooks()
         .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 }

@@ -4,8 +4,10 @@ import com.example.a3406.data.AppDatabase
 import com.example.a3406.db.Book
 import com.example.a3406.model.Book as ModelBook
 import com.example.a3406.network.RetrofitClient
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class BookRepository(
     database: AppDatabase
@@ -16,11 +18,12 @@ class BookRepository(
     fun getAllBooks(): Flow<List<ModelBook>> = flow {
         val books = bookQueries.selectAllBooks().executeAsList()
         emit(books.map { toModelBook(it) })
-    }
+    }.flowOn(Dispatchers.IO)
 
-    fun getBookById(id: String): ModelBook? {
-        return bookQueries.selectBookById(id).executeAsOneOrNull()?.let { toModelBook(it) }
-    }
+    fun getBookById(id: String): Flow<ModelBook?> = flow {
+        val book = bookQueries.selectBookById(id).executeAsOneOrNull()?.let { toModelBook(it) }
+        emit(book)
+    }.flowOn(Dispatchers.IO)
 
     fun addBook(book: ModelBook) {
         bookQueries.insertBook(
@@ -52,7 +55,7 @@ class BookRepository(
 
     suspend fun getRecommendations(genre: String): Result<List<ModelBook>> {
         return try {
-            val response = bookApiService.searchBooks("subject:$genre", "YOUR_ACTUAL_API_KEY") // 替换为真实的 API Key
+            val response = bookApiService.searchBooks("subject:$genre", "YOUR_ACTUAL_API_KEY")
             val books = response.items?.map { item ->
                 ModelBook(
                     id = item.id,
