@@ -14,19 +14,48 @@ class BookDetailViewModel(private val repository: BookRepository) : ViewModel() 
     private val _book = MutableStateFlow<Book?>(null)
     val book: StateFlow<Book?> = _book
 
+    private val _pendingProgress = MutableStateFlow<Int?>(null)
+    val pendingProgress: StateFlow<Int?> = _pendingProgress
+
+    private val _pendingRating = MutableStateFlow<Int?>(null)
+    val pendingRating: StateFlow<Int?> = _pendingRating
+
+    private val _pendingReview = MutableStateFlow<String?>(null)
+    val pendingReview: StateFlow<String?> = _pendingReview
+
     fun loadBook(bookId: String) {
         viewModelScope.launch {
             repository.getBookById(bookId)
                 .stateIn(viewModelScope, SharingStarted.Lazily, null)
                 .collect { book ->
                     _book.value = book
+
+                    _pendingProgress.value = book?.progress
+                    _pendingRating.value = book?.rating
+                    _pendingReview.value = book?.review
                 }
         }
     }
 
-    fun updateProgress(progress: Int) {
+    fun updatePendingProgress(progress: Int) {
+        _pendingProgress.value = progress
+    }
+
+    fun updatePendingRating(rating: Int) {
+        _pendingRating.value = rating
+    }
+
+    fun updatePendingReview(review: String) {
+        _pendingReview.value = review
+    }
+
+    fun confirmChanges() {
         _book.value?.let { currentBook ->
-            val updatedBook = currentBook.copy(progress = progress)
+            val updatedBook = currentBook.copy(
+                progress = _pendingProgress.value ?: currentBook.progress,
+                rating = _pendingRating.value ?: currentBook.rating,
+                review = _pendingReview.value ?: currentBook.review
+            )
             _book.value = updatedBook
             viewModelScope.launch {
                 repository.updateBook(updatedBook)
@@ -34,22 +63,11 @@ class BookDetailViewModel(private val repository: BookRepository) : ViewModel() 
         }
     }
 
-    fun updateRating(rating: Int) {
-        _book.value?.let { currentBook ->
-            val updatedBook = currentBook.copy(rating = rating)
-            _book.value = updatedBook
+    fun deleteBook() {
+        _book.value?.let { book ->
             viewModelScope.launch {
-                repository.updateBook(updatedBook)
-            }
-        }
-    }
-
-    fun updateReview(review: String) {
-        _book.value?.let { currentBook ->
-            val updatedBook = currentBook.copy(review = review)
-            _book.value = updatedBook
-            viewModelScope.launch {
-                repository.updateBook(updatedBook)
+                repository.deleteBook(book.id)
+                _book.value = null
             }
         }
     }

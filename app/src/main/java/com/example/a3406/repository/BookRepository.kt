@@ -53,9 +53,13 @@ class BookRepository(
         )
     }
 
+    fun deleteBook(id: String) {
+        bookQueries.deleteBook(id)
+    }
+
     suspend fun getRecommendations(genre: String): Result<List<ModelBook>> {
         return try {
-            val response = bookApiService.searchBooks("subject:$genre", "YOUR_ACTUAL_API_KEY")
+            val response = bookApiService.searchBooks("subject:$genre", "AIzaSyAPxaXgE24LDKgL63EVhKTIIDGZI5NG2gc")
             val books = response.items?.map { item ->
                 ModelBook(
                     id = item.id,
@@ -66,7 +70,13 @@ class BookRepository(
                     genre = genre
                 )
             } ?: emptyList()
-            books.forEach { addBook(it) }
+
+            books.forEach { book ->
+                val existingBook = bookQueries.selectBookById(book.id).executeAsOneOrNull()
+                if (existingBook == null) {
+                    addBook(book)
+                }
+            }
             Result.Success(books)
         } catch (e: Exception) {
             Result.Error(e.message ?: "Failed to fetch recommendations")

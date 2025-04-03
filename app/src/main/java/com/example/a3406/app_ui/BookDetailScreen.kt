@@ -18,6 +18,9 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
     }
 
     val book by viewModel.book.collectAsState()
+    val pendingProgress by viewModel.pendingProgress.collectAsState()
+    val pendingRating by viewModel.pendingRating.collectAsState()
+    val pendingReview by viewModel.pendingReview.collectAsState()
 
     if (book == null) {
         Box(
@@ -39,37 +42,61 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
             Text(text = "Author: ${book!!.author}")
             Text(text = "Description: ${book!!.description}")
 
-            var progress by remember { mutableStateOf(book!!.progress.toString()) }
+            var progress by remember { mutableStateOf(pendingProgress?.toString() ?: book!!.progress.toString()) }
             TextField(
                 value = progress,
                 onValueChange = {
                     progress = it
                     val newProgress = it.toIntOrNull() ?: 0
-                    if (newProgress in 0..100) viewModel.updateProgress(newProgress)
+                    if (newProgress in 0..100) viewModel.updatePendingProgress(newProgress)
                 },
                 label = { Text("Progress (0-100)") }
             )
 
-            var rating by remember { mutableStateOf(book!!.rating.toString()) }
+            var rating by remember { mutableStateOf(pendingRating?.toString() ?: book!!.rating.toString()) }
             TextField(
                 value = rating,
                 onValueChange = {
                     rating = it
                     val newRating = it.toIntOrNull() ?: 0
-                    if (newRating in 1..5) viewModel.updateRating(newRating)
+                    if (newRating in 1..5) viewModel.updatePendingRating(newRating)
                 },
                 label = { Text("Rating (1-5)") }
             )
 
-            var review by remember { mutableStateOf(book!!.review ?: "") }
+            var review by remember { mutableStateOf(pendingReview ?: book!!.review ?: "") }
             TextField(
                 value = review,
                 onValueChange = {
                     review = it
-                    viewModel.updateReview(it)
+                    viewModel.updatePendingReview(it)
                 },
                 label = { Text("Review") }
             )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = {
+                    viewModel.confirmChanges()
+                    navController.popBackStack()
+                }) {
+                    Text("Confirm")
+                }
+
+                Button(
+                    onClick = {
+                        viewModel.deleteBook()
+                        navController.popBackStack()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error
+                    )
+                ) {
+                    Text("Delete")
+                }
+            }
         }
     }
 }
