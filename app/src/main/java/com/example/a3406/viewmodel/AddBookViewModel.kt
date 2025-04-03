@@ -6,6 +6,7 @@ import com.example.a3406.model.Book
 import com.example.a3406.repository.BookRepository
 import kotlinx.coroutines.launch
 import java.util.UUID
+import android.util.Log
 
 class AddBookViewModel(private val repository: BookRepository) : ViewModel() {
     fun addBook(
@@ -18,18 +19,23 @@ class AddBookViewModel(private val repository: BookRepository) : ViewModel() {
         genre: String
     ) {
         viewModelScope.launch {
-            val book = Book(
-                id = UUID.randomUUID().toString(),
-                title = title,
-                author = author,
-                description = description,
-                coverUrl = null,
-                progress = progress,
-                rating = rating,
-                review = review,
-                genre = genre
-            )
-            repository.addBook(book)
+            try {
+                val book = Book(
+                    id = UUID.randomUUID().toString(),
+                    title = title,
+                    author = author,
+                    description = description,
+                    coverUrl = null,
+                    progress = progress,
+                    rating = rating,
+                    review = review,
+                    genre = genre
+                )
+                repository.addBook(book)
+                Log.d("AddBookViewModel", "Book added: $title")
+            } catch (e: Exception) {
+                Log.e("AddBookViewModel", "Failed to add book: ${e.message}")
+            }
         }
     }
 }

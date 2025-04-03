@@ -1,5 +1,6 @@
 package com.example.a3406.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.a3406.model.Book
@@ -20,9 +21,16 @@ class RecommendationsViewModel(private val repository: BookRepository) : ViewMod
             _recommendedBooks.value = Result.Loading
             try {
                 val localBooks = repository.getAllBooks().stateIn(viewModelScope, SharingStarted.Lazily, emptyList()).value
-                val genre = localBooks.firstOrNull()?.genre ?: "fiction"
+                val genre = if (localBooks.isEmpty()) {
+                    Log.w("RecommendationsVM", "No local books found, using default genre 'fiction'")
+                    "fiction"
+                } else {
+                    localBooks.firstOrNull()?.genre ?: "fiction"
+                }
+                Log.d("RecommendationsVM", "Fetching recommendations for genre: $genre")
                 _recommendedBooks.value = repository.getRecommendations(genre)
             } catch (e: Exception) {
+                Log.e("RecommendationsVM", "Error: ${e.message}")
                 _recommendedBooks.value = Result.Error(e.message ?: "Failed to fetch recommendations")
             }
         }

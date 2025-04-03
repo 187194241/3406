@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application") version "8.9.1" apply true
     id("org.jetbrains.kotlin.android") version "1.9.25" apply true
-    id("app.cash.sqldelight")
+    id("app.cash.sqldelight") version "2.0.2" apply true
 }
 
 android {

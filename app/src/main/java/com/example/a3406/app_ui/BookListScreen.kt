@@ -11,11 +11,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.a3406.viewmodel.BookListViewModel
 import org.koin.androidx.compose.koinViewModel
+import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun BookListScreen(navController: NavController) {
     val viewModel: BookListViewModel = koinViewModel()
     val books = viewModel.books.collectAsState().value
+
+    LaunchedEffect(Unit) {
+        viewModel.books
+    }
 
     Column(
         modifier = Modifier
