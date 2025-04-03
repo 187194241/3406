@@ -4,23 +4,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.a3406.viewmodel.BookListViewModel
 import org.koin.androidx.compose.koinViewModel
-import androidx.compose.runtime.LaunchedEffect
 
 @Composable
 fun BookListScreen(navController: NavController) {
     val viewModel: BookListViewModel = koinViewModel()
-    val books = viewModel.books.collectAsState().value
-
-    LaunchedEffect(Unit) {
-        viewModel.books
-    }
+    val books by viewModel.books.collectAsState()
 
     Column(
         modifier = Modifier
@@ -36,6 +30,10 @@ fun BookListScreen(navController: NavController) {
             }
             Button(onClick = { navController.navigate("recommendations") }) {
                 Text("Recommendations")
+            }
+            // 添加刷新按钮
+            Button(onClick = { viewModel.loadBooks() }) {
+                Text("Refresh")
             }
         }
 
