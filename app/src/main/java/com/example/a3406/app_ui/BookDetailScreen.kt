@@ -1,6 +1,8 @@
 package com.example.a3406.app_ui
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,7 +37,8 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()), // 添加可滚动支持
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(text = book!!.title, style = MaterialTheme.typography.headlineMedium)
