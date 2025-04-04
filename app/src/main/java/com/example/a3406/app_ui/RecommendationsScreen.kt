@@ -22,7 +22,6 @@ fun RecommendationsScreen(navController: NavController) {
     val recommendedBooksState = viewModel.recommendedBooks.collectAsState()
     val recommendedBooks = recommendedBooksState.value
 
-    // 在屏幕加载时自动获取推荐书籍
     LaunchedEffect(Unit) {
         viewModel.fetchRecommendationsByGenreFromLocalBooks()
     }

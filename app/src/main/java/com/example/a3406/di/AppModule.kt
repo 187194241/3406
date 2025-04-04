@@ -10,11 +10,10 @@ import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    // 数据库和 Repository
+
     single { AppDatabase(get()) }
     single { BookRepository(get()) }
 
-    // ViewModel 定义
     viewModel { BookListViewModel(get()) }
     viewModel { AddBookViewModel(get()) }
     viewModel { RecommendationsViewModel(get()) }
