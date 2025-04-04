@@ -31,7 +31,7 @@ fun BookListScreen(navController: NavController) {
             Button(onClick = { navController.navigate("recommendations") }) {
                 Text("Recommendations")
             }
-            // 添加刷新按钮
+
             Button(onClick = { viewModel.loadBooks() }) {
                 Text("Refresh")
             }

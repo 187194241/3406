@@ -6,13 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.rememberNavController
 import com.example.a3406.navigation.SetupNavGraph
-import com.example.a3406.ui.theme._3406Theme
+import com.example.a3406.ui.theme.BookAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            _3406Theme {
+            BookAppTheme {
                 BookTrackerApp()
             }
         }

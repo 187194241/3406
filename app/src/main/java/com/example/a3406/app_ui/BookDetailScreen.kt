@@ -38,7 +38,7 @@ fun BookDetailScreen(navController: NavController, bookId: String) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
-                .verticalScroll(rememberScrollState()), // 添加可滚动支持
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(text = book!!.title, style = MaterialTheme.typography.headlineMedium)

@@ -59,7 +59,10 @@ class BookRepository(
 
     suspend fun getRecommendations(genre: String): Result<List<ModelBook>> {
         return try {
-            val response = bookApiService.searchBooks("subject:$genre", "AIzaSyAPxaXgE24LDKgL63EVhKTIIDGZI5NG2gc")
+            val response = bookApiService.searchBooks(
+                "subject:$genre",
+                "AIzaSyAPxaXgE24LDKgL63EVhKTIIDGZI5NG2gc"
+            )
             val books = response.items?.map { item ->
                 ModelBook(
                     id = item.id,
@@ -83,6 +86,8 @@ class BookRepository(
         }
     }
 }
+
+
 
 fun toModelBook(book: Book) = ModelBook(
     id = book.id,
